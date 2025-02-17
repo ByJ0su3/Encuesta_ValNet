@@ -11,17 +11,22 @@ app.use(cors({
 }));
 
 // Pool de conexiones para mejor manejo
-const config = {
-  server: process.env.DB_HOST,  // ✅ Usa una variable de entorno real
-  database: process.env.DB_NAME,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
+const dbConfig = {
+  server: "process.env.34.46.10.198", 
+  database: "process.env.datos_ec",
+  authentication: {
+    type: 'ntlm',
+    options: {
+      userName: 'process.env.Pc',         // Tu usuario de Windows
+      password: 'process.env.Dominguez007', // Tu contraseña de Windows
+      domain: 'process.env.HP-VICTUS'       // Solo el dominio o el nombre del equipo; no incluyas el usuario aquí
+    }
+  },
   options: {
-    encrypt: true,
-    trustServerCertificate: true
+    encrypt: false,
+    trustServerCertificate: true,
   }
 };
-
 
 // Crear el pool de conexiones
 const pool = new sql.ConnectionPool(dbConfig);
