@@ -5,12 +5,18 @@ const sql = require("mssql");
 
 const app = express();
 
+const allowedOrigins = ['https://byj0su3.github.io/Encuesta_ValNet/', 'https://otro-dominio.com'];
 app.use(cors({
-  origin: 'https://byj0su3.github.io/Encuesta_ValNet/',  // Permite solo este dominio
-  methods: ['GET', 'POST'], // Métodos permitidos
+  origin: function(origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('No permitido por CORS'));
+    }
+  },
+  methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type']
 }));
-app.use(bodyParser.json());
 
 const dbConfig = {
   server: "34.46.10.198", 
