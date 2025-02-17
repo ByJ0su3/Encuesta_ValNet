@@ -13,14 +13,14 @@ app.use(cors({
 app.use(bodyParser.json());
 
 const dbConfig = {
-  server: "34.46.10.198", 
-  database: "datos_ec",
+  server: "process.env.34.46.10.198", 
+  database: "process.env.datos_ec",
   authentication: {
     type: 'ntlm',
     options: {
-      userName: 'Pc',         // Tu usuario de Windows
-      password: 'Dominguez007', // Tu contraseña de Windows
-      domain: 'HP-VICTUS'       // Solo el dominio o el nombre del equipo; no incluyas el usuario aquí
+      userName: 'process.env.Pc',         // Tu usuario de Windows
+      password: 'process.env.Dominguez007', // Tu contraseña de Windows
+      domain: 'process.env.HP-VICTUS'       // Solo el dominio o el nombre del equipo; no incluyas el usuario aquí
     }
   },
   options: {
@@ -95,7 +95,7 @@ app.post('/submit-encuesta', async (req, res) => {
 });
 
 // Iniciar el servidor en el puerto 3000
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+const PORT = process.env.PORT || 8080; // Cloud Run usa 8080 por defecto
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Servidor corriendo en http://0.0.0.0:${PORT}`);
 });
