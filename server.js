@@ -10,7 +10,7 @@ app.use(cors({
   methods: ['GET', 'POST'], // Métodos permitidos
   allowedHeaders: ['Content-Type']
 }));
-app.use(bodyParser.json());
+app.use(express.json());
 
 const dbConfig = {
   server: "process.env.34.46.10.198", 
