@@ -6,7 +6,7 @@ const sql = require("mssql");
 const app = express();
 
 app.use(cors({
-  origin: 'https://byj0su3.github.io/Encuesta_ValNet/',  // Permite solo este dominio
+  origin: '*',  // Permite solo este dominio
   methods: ['GET', 'POST'], // Métodos permitidos
   allowedHeaders: ['Content-Type']
 }));
