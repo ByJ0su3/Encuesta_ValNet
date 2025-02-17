@@ -343,14 +343,15 @@ function enviarEncuesta() {
         pregunta10: localStorage.getItem("pregunta10")
     };
 
-    fetch('https://encuesta-valnet1-32638457315.us-central1.run.app/submit-encuesta', {
-        method: 'POST',
-        mode: 'cors',  
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(surveyData)
+  fetch('https://encuesta-valnet1-32638457315.us-central1.run.app/submit-encuesta', {
+  method: 'POST',
+  mode: 'cors',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(surveyData)
     })
+
     .then(response => response.json())
     .then(data => {
         console.log("Respuesta del servidor:", data);
