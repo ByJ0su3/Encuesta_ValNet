@@ -16,10 +16,10 @@ app.use(express.json());
 
 // Configuración de conexión a la base de datos
 const dbConfig = {
-  server: process.env.DB_HOST, 
-  database: process.env.DB_NAME,
-  user: process.env.DB_USER,       
-  password: process.env.DB_PASS,  
+  server: "34.46.10.198", 
+  database: "datos_ec",
+  user: "Pc",       
+  password: "Dominguez007",  
   port: 1433, // Puerto estándar de SQL Server
   options: {
     encrypt: false, // Cambia a `true` si usas Azure
