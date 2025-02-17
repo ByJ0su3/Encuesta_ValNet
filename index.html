@@ -343,7 +343,7 @@ function enviarEncuesta() {
         pregunta10: localStorage.getItem("pregunta10")
     };
 
-    fetch('http://localhost:3000/submit-encuesta', {
+    fetch('https://encuesta-valnet-32638457315.us-central1.run.app/submit-encuesta', {
         method: 'POST',
         mode: 'cors',  
         headers: {
