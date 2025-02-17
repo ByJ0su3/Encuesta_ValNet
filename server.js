@@ -11,22 +11,17 @@ app.use(cors({
 }));
 
 // Pool de conexiones para mejor manejo
-const dbConfig = {
-  server: process.env.34.46.10.198,         // Ej: 34.46.10.198
-  database: process.env.datos_ec,       // Ej: datos_ec
-  user: process.env.Pc,           // Usuario SQL
-  password: process.env.Dominguez007,   // Contraseña SQL
+const config = {
+  server: process.env.DB_HOST,  // ✅ Usa una variable de entorno real
+  database: process.env.DB_NAME,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
   options: {
-    encrypt: false,
-    trustServerCertificate: true,
-    enableArithAbort: true
-  },
-  pool: {
-    max: 10,
-    min: 0,
-    idleTimeoutMillis: 30000
+    encrypt: true,
+    trustServerCertificate: true
   }
 };
+
 
 // Crear el pool de conexiones
 const pool = new sql.ConnectionPool(dbConfig);
