@@ -29,10 +29,19 @@ const dbConfig = {
 };
 
 // Crear el pool de conexiones
-const pool = new sql.ConnectionPool(dbConfig);
-pool.connect()
-  .then(() => console.log('✅ Conexión exitosa a SQL Server'))
-  .catch(err => console.error('❌ Error de conexión:', err));
+async function connectToDatabase() {
+  try {
+    await sql.connect(dbConfig);
+    console.log('✅ Conectado a SQL Server');
+  } catch (error) {
+    console.error('❌ Error de conexión:', {
+      message: error.message,
+      code: error.code,
+      stack: error.stack
+    });
+    process.exit(1); // Detener la app si falla
+  }
+}
 
 // Middleware para manejar conexiones
 app.use(async (req, res, next) => {
