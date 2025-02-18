@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Encuesta Sucursal</title>
+  <link rel="icon" href="src/icon.ico" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+  <style>
+    /* Reiniciamos márgenes y aseguramos que todo ocupe el 100% */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+    body {
+      font-family: "Montserrat", sans-serif;
+    }
+    /* Cada sección ocupará toda la pantalla */
+    .section {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none; /* Se ocultan por defecto */
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      opacity: 1;
+      transition: opacity 0.8s ease-in-out;
+      flex-direction: column;
+      box-sizing: border-box;
+      padding: 20px;
+    }
+    /* La sección activa se muestra (display:flex) */
+    .section.active {
+      display: flex;
+    }
+    /* Clase para aplicar el efecto fade-out */
+    .fade-out {
+      opacity: 0;
+    }
+    /* Estilos propios para cada sección */
+    #landingSection, #ec0Section {
+      background-color: #0056B3;
+      color: white;
+    }
+    #ec1Section, #ec2Section, #ec3Section, #ec4Section, 
+    #ec5Section, #ec6Section, #ec7Section, #ec8Section, 
+    #ec9Section, #ec10Section, #thanksSection {
+      background-color: white;
+      color: #0056B3;
+    }
+    /* Estilos generales para botones */
+    button {
+      font-family: "Montserrat", sans-serif;
+      background-color: #FF6A00;
+      border: 4px solid white;
+      border-radius: 10px;
+      color: white;
+      padding: 10px 20px;
+      font-size: 1.5rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 20px;
+    }
+    button:hover {
+      background-color: white;
+      color: #FF6A00;
+      border: 4px solid #FF6A00;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+    /* Estilos para inputs y mensajes de error */
+    .input-field {
+      font-family: "Montserrat", sans-serif;  
+      width: 80%;
+      max-width: 400px;
+      height: 50px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 10px;
+      padding: 10px;
+      outline: none;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      margin: 10px 0;
+    }
+    .error-message {
+      font-family: "Montserrat", sans-serif;    
+      color: #FF6A00;
+      font-size: 1.5rem;
+      margin-top: 10px;
+      display: none;
+    }
+
+    /* ========== MEDIA QUERIES ========== */
+    /* Para tablet (max-width: 768px) */
+    @media (max-width: 768px) {
+      .section {
+        padding: 15px;
+      }
+      h1 {
+        font-size: 1.5rem;
+      }
+      h2 {
+        font-size: 1.3rem;
+      }
+      .input-field {
+        font-size: 1rem;
+        height: 45px;
+      }
+      button {
+        font-size: 1.3rem;
+        padding: 8px 16px;
+      }
+      img.logo {
+        width: 120px; /* Ajusta el tamaño de la imagen en tablet */
+      }
+    }
+
+    /* Para móvil (max-width: 480px) */
+    @media (max-width: 480px) {
+      .section {
+        padding: 10px;
+      }
+      h1 {
+        font-size: 1.3rem;
+      }
+      h2 {
+        font-size: 1rem;
+      }
+      .input-field {
+        font-size: 0.9rem;
+        height: 40px;
+      }
+      button {
+        font-size: 1.1rem;
+        padding: 6px 12px;
+      }
+      img.logo {
+        width: 80px; /* Tamaño más reducido en móvil */
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sección de bienvenida -->
+  <section id="landingSection" class="section active">
+    <img src="src/logo.png" alt="ValNet" class="logo" style="width:250px; max-width:80%; font-size:2rem; font-weight:bold; margin-bottom:10px;">
+    <h1>DÉJANOS SABER TU OPINIÓN</h1>
+    <button onclick="goToSection('ec0Section')">COMENZAR</button>
+  </section>
+
+  <!-- Sección de ingreso de cédula -->
+  <section id="ec0Section" class="section">
+    <img src="src/icon.png" alt="ValNet Logo" class="logo" style="width:100px; margin-bottom:20px;">
+    <div style="font-size:1.7rem; font-weight:bold; margin-bottom:10px;">POR FAVOR DIGITE SU CÉDULA O PASAPORTE</div>
+    <div style="font-size:1rem; font-weight:100; margin-bottom:10px;">SIN GUIONES</div>
+    <form id="formCedula" onsubmit="validateCedula(); return false;">
+      <input type="text" id="cedula" class="input-field" placeholder="Escriba aquí...">
+      <div id="error-message" class="error-message">Por favor, ingrese un número válido.</div>
+      <button type="submit">CONTINUAR</button>
+    </form>
+  </section>
+
+  <!-- Pregunta 1 -->
+  <section id="ec1Section" class="section">
+    <img src="src/v azul.png" alt="ValNet Logo" class="logo" style="width:100px; margin-bottom:20px;">
+    <h1 style="font-size:1.7rem; font-weight:bolder;">¿Está satisfecho con la velocidad de su internet?</h1>
+    <form onsubmit="return false;">
+      <button type="button" onclick="saveResponseAndGoTo('pregunta1', 'Sí', 'ec2Section')">Sí</button>
+      <button type="button" onclick="saveResponseAndGoTo('pregunta1', 'No', 'ec2Section')">No</button>
+    </form>
+    <div style="font-size:1.5rem; margin-top:25px;">1/10</div>
+  </section>
+
+  <!-- Pregunta 2 -->
+  <section id="ec2Section" class="section">
+    <img src="src/v azul.png" alt="ValNet Logo" class="logo" style="width:100px; margin-bottom:20px;">
+    <h1 style="font-size:1.7rem; font-weight:bolder;">¿El internet se ha mantenido estable y sin interrupciones frecuentes?</h1>
+    <form onsubmit="return false;">
+      <button type="button" onclick="saveResponseAndGoTo('pregunta2', 'Sí', 'ec3Section')">Sí</button>
+      <button type="button" onclick="saveResponseAndGoTo('pregunta2', 'No', 'ec3Section')">No</button>
+    </form>
+    <div style="font-size:1.5rem; margin-top:25px;">2/10</div>
+  </section>
+
+  <!-- Pregunta 3 -->
+  <section id="ec3Section" class="section">
+    <img src="src/v azul.png" alt="ValNet Logo" class="logo" style="width:100px; margin-bottom:20px;">
+    <h1 style="font-size:1.7rem; font-weight:bolder;">¿Recibió el soporte técnico adecuado cuando lo solicitó?</h1>
+    <form onsubmit="return false;">
+      <button type="button" onclick="saveResponseAndGoTo('pregunta3', 'Sí', 'ec4Section')">Sí</button>
+      <button type="button" onclick="saveResponseAndGoTo('pregunta3', 'No', 'ec4Section')">No</button>
+    </form>
+    <div style="font-size:1.5rem; margin-top:25px;">3/10</div>
+  </section>
+
+  <!-- Pregunta 4 -->
+  <section id="ec4Section" class="section">
+    <img src="src/v azul.png" alt="ValNet Logo" class="logo" style="width:100px; margin-bottom:20px;">
+    <h1 style="font-size:1.7rem; font-weight:bolder;">¿La instalación del servicio fue realizada de manera oportuna y sin inconvenientes?</h1>
+    <form onsubmit="return false;">
+      <button type="button" onclick="saveResponseAndGoTo('pregunta4', 'Sí', 'ec5Section')">Sí</button>
+      <button type="button" onclick="saveResponseAndGoTo('pregunta4', 'No', 'ec5Section')">No</button>
+    </form>
+    <div style="font-size:1.5rem; margin-top:25px;">4/10</div>
+  </section>
+
+  <!-- Pregunta 5 -->
+  <section id="ec5Section" class="section">
+    <img src="src/v azul.png" alt="ValNet Logo" class="logo" style="width:100px; margin-bottom:20px;">
+    <h1 style="font-size:1.7rem; font-weight:bolder;">¿Considera que el precio que paga por el servicio es justo en relación con la calidad ofrecida?</h1>
+    <form onsubmit="return false;">
+      <button type="button" onclick="saveResponseAndGoTo('pregunta5', 'Sí', 'ec6Section')">Sí</button>
+      <button type="button" onclick="saveResponseAndGoTo('pregunta5', 'No', 'ec6Section')">No</button>
+    </form>
+    <div style="font-size:1.5rem; margin-top:25px;">5/10</div>
+  </section>
+
+  <!-- Pregunta 6 -->
+  <section id="ec6Section" class="section">
+    <img src="src/v azul.png" alt="ValNet Logo" class="logo" style="width:100px; margin-bottom:20px;">
+    <h2 style="font-size:1.2rem; font-weight:bolder;">¿Ha visitado una de nuestras sucursales? (Si la respuesta es sí)</h2>
+    <h1 style="font-size:1.7rem; font-weight:bolder;">¿Se sintió satisfecho(a) con la asistencia brindada?</h1>
+    <form onsubmit="return false;">
+      <button type="button" onclick="saveResponseAndGoTo('pregunta6', 'Sí', 'ec7Section')">Sí</button>
+      <button type="button" onclick="saveResponseAndGoTo('pregunta6', 'No', 'ec7Section')">No</button>
+    </form>
+    <div style="font-size:1.5rem; margin-top:25px;">6/10</div>
+  </section>
+
+  <!-- Pregunta 7 -->
+  <section id="ec7Section" class="section">
+    <img src="src/v azul.png" alt="ValNet Logo" class="logo" style="width:100px; margin-bottom:20px;">
+    <h1 style="font-size:1.7rem; font-weight:bolder;">¿Está conforme con la atención al cliente brindada en caso de dudas o averías?</h1>
+    <form onsubmit="return false;">
+      <button type="button" onclick="saveResponseAndGoTo('pregunta7', 'Sí', 'ec8Section')">Sí</button>
+      <button type="button" onclick="saveResponseAndGoTo('pregunta7', 'No', 'ec8Section')">No</button>
+    </form>
+    <div style="font-size:1.5rem; margin-top:25px;">7/10</div>
+  </section>
+
+  <!-- Pregunta 8 -->
+  <section id="ec8Section" class="section">
+    <img src="src/v azul.png" alt="ValNet Logo" class="logo" style="width:100px; margin-bottom:20px;">
+    <h1 style="font-size:1.7rem; font-weight:bolder;">¿Recomendaría nuestro servicio de internet a otras personas?</h1>
+    <form onsubmit="return false;">
+      <button type="button" onclick="saveResponseAndGoTo('pregunta8', 'Sí', 'ec9Section')">Sí</button>
+      <button type="button" onclick="saveResponseAndGoTo('pregunta8', 'No', 'ec9Section')">No</button>
+    </form>
+    <div style="font-size:1.5rem; margin-top:25px;">8/10</div>
+  </section>
+
+  <!-- Pregunta 9 -->
+  <section id="ec9Section" class="section">
+    <img src="src/v azul.png" alt="ValNet Logo" class="logo" style="width:100px; margin-bottom:20px;">
+    <h1 style="font-size:1.7rem; font-weight:bolder;">¿Ha experimentado problemas con la facturación de su servicio?</h1>
+    <form onsubmit="return false;">
+      <button type="button" onclick="saveResponseAndGoTo('pregunta9', 'Sí', 'ec10Section')">Sí</button>
+      <button type="button" onclick="saveResponseAndGoTo('pregunta9', 'No', 'ec10Section')">No</button>
+    </form>
+    <div style="font-size:1.5rem; margin-top:25px;">9/10</div>
+  </section>
+
+  <!-- Pregunta 10 -->
+  <section id="ec10Section" class="section">
+    <img src="src/v azul.png" alt="ValNet Logo" class="logo" style="width:100px; margin-bottom:20px;">
+    <h1 style="font-size:1.7rem; font-weight:bolder;">¿Está conforme con el alcance de la señal wifi?</h1>
+    <form onsubmit="return false;">
+      <button type="button" onclick="saveResponseAndGoTo('pregunta10', 'Sí', 'thanksSection')">Sí</button>
+      <button type="button" onclick="saveResponseAndGoTo('pregunta10', 'No', 'thanksSection')">No</button>
+    </form>
+    <div style="font-size:1.5rem; margin-top:25px;">10/10</div>
+  </section>
+
+  <!-- Sección final de agradecimiento -->
+  <section id="thanksSection" class="section">
+    <img src="src/v azul.png" alt="ValNet Logo" class="logo" style="width:80px; margin-bottom:20px;">
+    <div style="font-size:1.5rem; font-weight:bold; margin-bottom:30px;">"Tu opinión es fundamental para mejorar nuestro servicio".</div>
+    <div style="font-size:2rem; font-weight:bold;">¡Gracias!</div>
+  </section>
+
+  <script>
+    // Función para hacer la transición entre secciones con efecto fade-out
+    const surveyData = {};
+
+// Función para hacer la transición entre secciones con efecto fade-out
+function goToSection(nextSectionId) {
+  const currentSection = document.querySelector('.section.active');
+  currentSection.classList.add('fade-out');
+
+  currentSection.addEventListener('transitionend', function handler() {
+      currentSection.classList.remove('active', 'fade-out');
+      currentSection.style.display = 'none';
+      currentSection.removeEventListener('transitionend', handler);
+
+      const nextSection = document.getElementById(nextSectionId);
+      nextSection.style.display = 'flex';
+      void nextSection.offsetWidth; // Forzar reflow para animaciones
+      nextSection.classList.add('active');
+
+      if (nextSectionId === "thanksSection") {
+          enviarEncuesta(); // Envía la encuesta al servidor
+      }
+  });
+}
+
+// Función para validar la cédula y avanzar
+function validateCedula() {
+  const cedula = document.getElementById('cedula').value.trim();
+  const errorMessage = document.getElementById('error-message');
+
+  if (cedula === '') {
+      errorMessage.textContent = "Por favor, ingrese su cédula o pasaporte.";
+      errorMessage.style.display = 'block';
+  } else {
+      errorMessage.style.display = 'none';
+      // Guardamos la cédula en el objeto global
+      surveyData.cedula = cedula;
+      goToSection('ec1Section');
+  }
+}
+
+// Guarda la respuesta de una pregunta y avanza a la siguiente
+function saveResponseAndGoTo(key, response, nextSectionId) {
+  surveyData[key] = response;
+  console.log(key + ': ' + response);
+  goToSection(nextSectionId);
+}
+
+// Enviar la encuesta al servidor (Cloud Run)
+function enviarEncuesta() {
+  fetch('https://encuesta-valnet-32638457315.us-central1.run.app', {
+    method: 'POST',
+    mode: 'cors',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(surveyData)
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log("Respuesta del servidor:", data);
+    setTimeout(() => {
+      location.reload();
+    }, 3000);
+  })
+  .catch(error => {
+    console.error("Error al enviar datos:", error);
+    setTimeout(() => {
+      location.reload();
+    }, 3000);
+  });
+}
+
+  </script>
+</body>
+</html>
