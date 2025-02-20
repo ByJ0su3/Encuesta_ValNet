@@ -1,87 +1,78 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 const sql = require("mssql");
 
 const app = express();
 
-// Configuración de CORS
+// 🔹 CORS configurado para permitir solo el frontend autorizado
 app.use(cors({
-  origin: 'https://byj0su3.github.io', // Asegura que solo tu frontend pueda hacer peticiones
+  origin: 'https://byj0su3.github.io',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type']
+  allowedHeaders: ['Content-Type'],
+  credentials: true
 }));
 
-// Middleware para parsear JSON
-app.use(bodyParser.json());
+// 🔹 Middleware para leer JSON correctamente
+app.use(express.json());
 
-// Configuración de la base de datos
+// 🔹 Configuración de la base de datos SQL Server
 const dbConfig = {
   server: "34.46.10.198",
   database: "datos_ec",
-  user: 'Pc',       // Usuario de SQL Server
-  password: 'Dominguez007',  // Contraseña del usuario de SQL Server
+  user: 'sa',
+  password: 'Dominguez007',
+  port: 1433,
   options: {
-    encrypt: false,
+    encrypt: true,
     trustServerCertificate: true,
   }
 };
 
-// Conectar a la base de datos
+// 🔹 Función para conectar a la base de datos
 async function connectToDatabase() {
   try {
-    await sql.connect(dbConfig);
-    console.log('✅ Conectado a SQL Server con autenticación de Windows');
+    if (!sql.pool) {
+      await sql.connect(dbConfig);
+      console.log('✅ Conectado a SQL Server');
+    }
   } catch (error) {
     console.error('❌ Error de conexión a SQL Server:', error);
   }
 }
-connectToDatabase();
 
-// Ruta para insertar respuestas de la encuesta
+// 🔹 Ruta para insertar respuestas de la encuesta
 app.post('/api/respuestas', async (req, res) => {
   try {
+    await connectToDatabase(); // Asegurar conexión antes de ejecutar la consulta
+
     const { 
       cedula, pregunta1, pregunta2, pregunta3, pregunta4, pregunta5, 
       pregunta6, pregunta7, pregunta8, pregunta9, pregunta10 
     } = req.body;
 
-    console.log("Datos recibidos:", req.body); // Log para depuración
+    console.log("📩 Datos recibidos:", req.body);
+
+    if (!cedula) {
+      return res.status(400).json({ success: false, message: "Cedula es requerida" });
+    }
 
     const fechaRegistro = new Date();
 
-    // Crear un objeto Request para el INSERT
-    const requestInsert = new sql.Request();
-    requestInsert.input("cedula", sql.VarChar, cedula);
-    requestInsert.input("pregunta1", sql.VarChar, pregunta1);
-    requestInsert.input("pregunta2", sql.VarChar, pregunta2);
-    requestInsert.input("pregunta3", sql.VarChar, pregunta3);
-    requestInsert.input("pregunta4", sql.VarChar, pregunta4);
-    requestInsert.input("pregunta5", sql.VarChar, pregunta5);
-    requestInsert.input("pregunta6", sql.VarChar, pregunta6);
-    requestInsert.input("pregunta7", sql.VarChar, pregunta7);
-    requestInsert.input("pregunta8", sql.VarChar, pregunta8);
-    requestInsert.input("pregunta9", sql.VarChar, pregunta9);
-    requestInsert.input("pregunta10", sql.VarChar, pregunta10);
-    requestInsert.input("fecha_registro", sql.DateTime, fechaRegistro);
-
-    // Ejecutar el INSERT
-    await requestInsert.query(`
+    // 🔹 Ejecutar el INSERT
+    await sql.query(`
       INSERT INTO respuestas_encuesta 
         (cedula, pregunta1, pregunta2, pregunta3, pregunta4, pregunta5, 
          pregunta6, pregunta7, pregunta8, pregunta9, pregunta10, fecha_registro)
       VALUES 
-        (@cedula, @pregunta1, @pregunta2, @pregunta3, @pregunta4, @pregunta5, 
-         @pregunta6, @pregunta7, @pregunta8, @pregunta9, @pregunta10, @fecha_registro);
+        ('${cedula}', '${pregunta1}', '${pregunta2}', '${pregunta3}', '${pregunta4}', '${pregunta5}', 
+         '${pregunta6}', '${pregunta7}', '${pregunta8}', '${pregunta9}', '${pregunta10}', '${fechaRegistro}');
     `);
 
-    console.log('✅ Registro insertado en la tabla respuestas_encuesta');
+    console.log('✅ Registro insertado correctamente');
 
-    // Crear un nuevo Request para el SELECT
-    const requestSelect = new sql.Request();
-    requestSelect.input("cedula", sql.VarChar, cedula);
-    const result = await requestSelect.query(`
-      SELECT * FROM respuestas_encuesta WHERE cedula = @cedula ORDER BY fecha_registro DESC;
+    // 🔹 Obtener el último registro insertado
+    const result = await sql.query(`
+      SELECT TOP 1 * FROM respuestas_encuesta WHERE cedula = '${cedula}' ORDER BY fecha_registro DESC;
     `);
 
     console.log('📌 Último registro insertado:', result.recordset[0]);
@@ -93,13 +84,13 @@ app.post('/api/respuestas', async (req, res) => {
   }
 });
 
-// Ruta de prueba para verificar que el servidor está funcionando
+// 🔹 Ruta de prueba
 app.get('/', (req, res) => {
   res.send('🚀 Servidor de encuestas funcionando correctamente');
 });
 
-// Iniciar el servidor
-const PORT = process.env.PORT || 8080; // Cloud Run usa 8080 por defecto
+// 🔹 Iniciar el servidor en Cloud Run (escuchar en 0.0.0.0)
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Servidor corriendo en http://0.0.0.0:${PORT}`);
 });
