@@ -17,7 +17,7 @@ app.use(express.json());
 
 // 🔹 Configuración de la base de datos SQL Server
 const dbConfig = {
-  server: "34.46.10.198",
+  server: "192.168.0.130",
   database: "datos_ec",
   user: 'sa',
   password: 'Dominguez007',
