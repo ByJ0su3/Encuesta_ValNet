@@ -6,7 +6,7 @@ const app = express();
 
 // Configuración de CORS
 app.use(cors({
-  origin: 'https://byj0su3.github.io', // Permitir solo este dominio
+  origin: ['https://byj0su3.github.io'], // Permitir solo este dominio
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos
   allowedHeaders: ['Content-Type'], // Cabeceras permitidas
   credentials: true // Permitir credenciales (si las usas)
