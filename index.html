@@ -333,7 +333,7 @@ function saveResponseAndGoTo(key, response, nextSectionId) {
 
 // Enviar la encuesta al servidor (Cloud Run)
 function enviarEncuesta() {
-  fetch('https://server-sjw557rw5q-uc.a.run.app/', {
+  fetch('https://server-sjw557rw5q-uc.a.run.app', {
     method: 'POST',
     mode: 'cors',
     headers: {
