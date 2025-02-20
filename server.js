@@ -39,7 +39,7 @@ async function connectToDatabase() {
 connectToDatabase();
 
 // Ruta para insertar respuestas de la encuesta
-app.post('/submit-encuesta', async (req, res) => {
+app.post('/api/respuestas', async (req, res) => {
   try {
     const { 
       cedula, pregunta1, pregunta2, pregunta3, pregunta4, pregunta5, 
