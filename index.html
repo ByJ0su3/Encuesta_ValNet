@@ -284,7 +284,8 @@
   </section>
 
   <script>
-   const surveyData = {};
+    // Función para hacer la transición entre secciones con efecto fade-out
+    const surveyData = {};
 
 // Función para hacer la transición entre secciones con efecto fade-out
 function goToSection(nextSectionId) {
@@ -292,18 +293,18 @@ function goToSection(nextSectionId) {
   currentSection.classList.add('fade-out');
 
   currentSection.addEventListener('transitionend', function handler() {
-    currentSection.classList.remove('active', 'fade-out');
-    currentSection.style.display = 'none';
-    currentSection.removeEventListener('transitionend', handler);
+      currentSection.classList.remove('active', 'fade-out');
+      currentSection.style.display = 'none';
+      currentSection.removeEventListener('transitionend', handler);
 
-    const nextSection = document.getElementById(nextSectionId);
-    nextSection.style.display = 'flex';
-    void nextSection.offsetWidth; // Forzar reflow para animaciones
-    nextSection.classList.add('active');
+      const nextSection = document.getElementById(nextSectionId);
+      nextSection.style.display = 'flex';
+      void nextSection.offsetWidth; // Forzar reflow para animaciones
+      nextSection.classList.add('active');
 
-    if (nextSectionId === "thanksSection") {
-      enviarEncuesta(); // Envía la encuesta al servidor
-    }
+      if (nextSectionId === "thanksSection") {
+          enviarEncuesta(); // Envía la encuesta al servidor
+      }
   });
 }
 
@@ -313,13 +314,13 @@ function validateCedula() {
   const errorMessage = document.getElementById('error-message');
 
   if (cedula === '') {
-    errorMessage.textContent = "Por favor, ingrese su cédula o pasaporte.";
-    errorMessage.style.display = 'block';
+      errorMessage.textContent = "Por favor, ingrese su cédula o pasaporte.";
+      errorMessage.style.display = 'block';
   } else {
-    errorMessage.style.display = 'none';
-    // Guardamos la cédula en el objeto global
-    surveyData.cedula = cedula;
-    goToSection('ec1Section');
+      errorMessage.style.display = 'none';
+      // Guardamos la cédula en el objeto global
+      surveyData.cedula = cedula;
+      goToSection('ec1Section');
   }
 }
 
@@ -332,42 +333,28 @@ function saveResponseAndGoTo(key, response, nextSectionId) {
 
 // Enviar la encuesta al servidor (Cloud Run)
 function enviarEncuesta() {
-  // Crear el objeto con el formato específico
-  const datosEncuesta = {
-    cedula: surveyData.cedula,
-    pregunta1: surveyData.pregunta1,
-    pregunta2: surveyData.pregunta2,
-    pregunta3: surveyData.pregunta3,
-    pregunta4: surveyData.pregunta4,
-    pregunta5: surveyData.pregunta5,
-    pregunta6: surveyData.pregunta6,
-    pregunta7: surveyData.pregunta7,
-    pregunta8: surveyData.pregunta8,
-    pregunta9: surveyData.pregunta9,
-    pregunta10: surveyData.pregunta10
-  };
-
-  // Enviar la solicitud al servidor
-  fetch('https://server-sjw557rw5q-uc.a.run.app/api/respuestas', {
+  fetch('https://server-32638457315.us-central1.run.app/api/respuestas', {
     method: 'POST',
+    mode: 'cors',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
+      
     },
-    body: JSON.stringify(datosEncuesta)
+    body: JSON.stringify(surveyData)
   })
-    .then(response => response.json())
-    .then(data => {
-      console.log("Respuesta del servidor:", data);
-      setTimeout(() => {
-        location.reload();
-      }, 3000);
-    })
-    .catch(error => {
-      console.error("Error al enviar datos:", error);
-      setTimeout(() => {
-        location.reload();
-      }, 3000);
-    });
+  .then(response => response.json())
+  .then(data => {
+    console.log("Respuesta del servidor:", data);
+    setTimeout(() => {
+      location.reload();
+    }, 3000);
+  })
+  .catch(error => {
+    console.error("Error al enviar datos:", error);
+    setTimeout(() => {
+      location.reload();
+    }, 3000);
+  });
 }
   </script>
 </body>
