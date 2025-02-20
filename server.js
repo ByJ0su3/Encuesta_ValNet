@@ -42,7 +42,7 @@ async function connectToDatabase() {
 }
 
 // Manejar solicitudes OPTIONS (preflight)
-app.options('/api/respuestas', (req, res) => {
+app.options('/', (req, res) => {
   res.header('Access-Control-Allow-Origin', 'https://byj0su3.github.io');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
@@ -50,7 +50,7 @@ app.options('/api/respuestas', (req, res) => {
 });
 
 // Ruta para insertar respuestas de la encuesta
-app.post('/api/respuestas', async (req, res) => {
+app.post('/', async (req, res) => {
   try {
     await connectToDatabase(); // Asegurar conexión antes de ejecutar la consulta
 
