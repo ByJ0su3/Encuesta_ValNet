@@ -12,18 +12,6 @@ app.use(cors({
   credentials: true
 }));
 
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://byj0su3.github.io");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.header("Access-Control-Allow-Credentials", "true");
-
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(204); // Responder preflight correctamente
-  }
-  next();
-});
-
 // Configuración del pool de conexión a SQL Server
 const pool = new sql.ConnectionPool({
   server: "34.46.34.127", 
@@ -36,12 +24,17 @@ const pool = new sql.ConnectionPool({
     trustServerCertificate: true,
   }
 });
-const poolConnect = pool.connect();
+
+// Middleware para parsear JSON
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Ruta para insertar respuestas de la encuesta
 app.post('/', async (req, res) => {
+  let connection;
   try {
-    await poolConnect; // Asegurar que el pool esté conectado
+    // Conectar al pool
+    connection = await pool.connect();
 
     const { 
       cedula, pregunta1, pregunta2, pregunta3, pregunta4, pregunta5, 
@@ -53,7 +46,8 @@ app.post('/', async (req, res) => {
     }
 
     const fechaRegistro = new Date();
-    const request = pool.request();
+
+    const request = connection.request();
 
     request.input('cedula', sql.VarChar, cedula);
     request.input('pregunta1', sql.VarChar, pregunta1);
@@ -88,11 +82,12 @@ app.post('/', async (req, res) => {
   } catch (error) {
     console.error('⚠️ Error al insertar datos:', error);
     res.status(500).json({ success: false, error: error.message });
+  } finally {
+    if (connection) {
+      connection.close(); // Cerrar la conexión después de cada solicitud
+    }
   }
 });
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 // Ruta de prueba
 app.get('/', (req, res) => {
