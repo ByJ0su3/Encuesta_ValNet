@@ -6,7 +6,7 @@ const app = express();
 
 // Configuración de CORS
 app.use(cors({
-  origin: 'https://byj0su3.github.io', // Permitir solo este dominio
+  origin: '*', // Permitir solo este dominio
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
@@ -14,15 +14,18 @@ app.use(cors({
 
 // Configuración del pool de conexión a SQL Server
 const pool = new sql.ConnectionPool({
-  server: "34.46.34.127", 
+  server: "34.46.34.127",
   database: "datos_ec",
   user: 'sa',
   password: 'Dominguez007',
   port: 1433,
   options: {
-    encrypt: true,
+    encrypt: false,  // ⚠️ Desactiva si el servidor no usa SSL
     trustServerCertificate: true,
-  }
+    enableArithAbort: true
+  },
+  connectionTimeout: 30000,  // ⏳ Aumenta el tiempo de espera
+  requestTimeout: 30000
 });
 
 // Middleware para parsear JSON
