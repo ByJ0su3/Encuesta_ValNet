@@ -26,7 +26,7 @@ app.use((req, res, next) => {
 
 // Configuración del pool de conexión a SQL Server
 const pool = new sql.ConnectionPool({
-  server: "host.docker.internal", 
+  server: "34.46.34.127", 
   database: "datos_ec",
   user: 'sa',
   password: 'Dominguez007',
