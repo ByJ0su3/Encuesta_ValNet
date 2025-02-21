@@ -6,9 +6,9 @@ const app = express();
 
 // Configuración de CORS
 app.use(cors({
-  origin: 'https://byj0su3.github.io', // Permite solicitudes desde este origen
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type'],
+  origin: 'https://byj0su3.github.io', // Permitir solo este dominio
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 }));
 
@@ -16,8 +16,10 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "https://byj0su3.github.io");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.header("Access-Control-Allow-Credentials", "true");
+
   if (req.method === "OPTIONS") {
-    return res.sendStatus(204); // Maneja las preflight requests
+    return res.sendStatus(204); // Responder preflight correctamente
   }
   next();
 });
@@ -88,6 +90,9 @@ app.post('/', async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Ruta de prueba
 app.get('/', (req, res) => {
